@@ -9,6 +9,8 @@ public class ServiceProvider {
     //fields
     private int sid;
     private int uid;
+    private String first_name;
+    private String last_name;
     private double avarage;
     private String date_added;
 
@@ -47,5 +49,21 @@ public class ServiceProvider {
 
     public void setDate_added(String date_added) {
         this.date_added = date_added;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 }

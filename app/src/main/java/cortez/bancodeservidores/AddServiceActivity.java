@@ -9,10 +9,18 @@ import android.view.View;
 
 public class AddServiceActivity extends AppCompatActivity {
 
+    //fields
+    ServiceProvider serviceProvider;
+    DBHelper db = new DBHelper(this);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_service);
+
+        //IMPLEMENTAR VARIAVEIS DE XML
+
     }
 
     @Override
@@ -25,16 +33,23 @@ public class AddServiceActivity extends AppCompatActivity {
 
 
     public void onClick(View v) {
+        serviceProvider = new ServiceProvider();
+
         switch (v.getId()) {
 
             case R.id.buttonAddService:
 
+                //IMPLEMENTAR GET NOS VIEWS E SALVAR EM SERVICEPROVIDER
+
+                serviceProvider.setFirst_name("babalu");
+                db.addServiceProvider(serviceProvider);
+                Intent returnServiceCreated = new Intent();
+                setResult(RESULT_OK, returnServiceCreated);
+                finish();
                 break;
 
         }
-        Intent returnServiceCreated = new Intent();
-        setResult(RESULT_OK, returnServiceCreated);
-        finish();
+
 
 
     }

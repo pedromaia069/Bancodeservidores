@@ -59,8 +59,16 @@ public class DBHelper  extends SQLiteOpenHelper{
         }
     }
 
-    public void addServiceProvider(){
+    public void addServiceProvider(ServiceProvider sp){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        try{
+            values.put("first_name",sp.getFirst_name());
 
+            db.insert("serviceProvidersTable",null,values);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public List<User> searchFor(String row, String word, String table) {
@@ -137,8 +145,12 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "serviceProvidersTable " +
                     "(sid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     "uid INTEGER NOT NULL, " +
+                    "first_name VARCHAR(10), " +
+                    "last_name VARCHAR(10), " +
                     "average DOUBLE, " +
-                    "date_added DATE)");
+                    "date_added DATE, " +
+                    "FOREIGN KEY (uid) REFERENCES usersTable(uid)" +
+                    ")");
             User u = new User();
             u.setUsername("victorsou");
             u.setSenha(Security.encrypt("123"));
