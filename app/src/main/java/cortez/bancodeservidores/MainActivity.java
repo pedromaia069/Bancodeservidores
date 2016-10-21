@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.loginButton:
                 //checando se a senha confere com o usuario
-                users = db.searchFor("username",usernameTextView.getText().toString(),"userTable");
+                users = db.searchFor("username",usernameTextView.getText().toString(),"usersTable");
                 if(users.size() == 0){
                     Toast t = Toast.makeText(this, "Usuario nao encrontado", Toast.LENGTH_LONG);
                     t.show();

@@ -10,6 +10,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="cortez.bancodeservidores.AddServiceActivity">
 
+    <TextView
+        android:id="@+id/extView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adicionar novo prestador de serviços"
+        android:layout_alignParentTop="true" />
+
     <Button
         android:text="Adicionar"
         android:layout_width="wrap_content"
@@ -18,4 +25,20 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/buttonAddService"
         android:onClick="onClick"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:id="@+id/scrollAdd"
+        android:layout_height="400sp"
+        android:layout_toStartOf="@+id/buttonAddService"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/buttonAddService">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+
 </RelativeLayout>

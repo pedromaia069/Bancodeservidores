@@ -41,7 +41,7 @@ public class MainMenu extends AppCompatActivity {
         //pegando usuario que fez o login
         Bundle extra = getIntent().getExtras();
         username = extra.getString("username");
-        users = db.searchFor("username",username,"userTable");
+        users = db.searchFor("username",username,"usersTable");
         //usuario que estamos lidando foi selecionado
         user = users.get(0);
 

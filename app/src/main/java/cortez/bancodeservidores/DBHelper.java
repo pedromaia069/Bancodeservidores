@@ -26,8 +26,15 @@ public class DBHelper  extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " +
-                "userTable " +
-                "(username VARCHAR(30), password BINARY(32), id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(20),name VARCHAR(40),photo BLOB)");
+                "usersTable " +
+                "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                " first_name VARCHAR(10), last_name VARCHAR(10), username VARCHAR(30), password BINARY(32),  email VARCHAR(20), date_joined DATE,adm_status BOOLEAN, photo BLOB)");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                "serviceProvidersTable " +
+                "sid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "average DOUBLE, " +
+                "date_added DATE");
     }
 
     @Override
@@ -37,7 +44,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         // create fresh users table
         this.onCreate(db);
     }
-    public void addUser(User user){
+    public void addUser(User user,String table){
         SQLiteDatabase db = this.getWritableDatabase();
         // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
@@ -45,11 +52,15 @@ public class DBHelper  extends SQLiteOpenHelper{
             values.put("username", user.getUsername());
             values.put("password", user.getSenha());
             values.put("photo", user.getFoto());
-            db.insert("userTable",null,values);
+            db.insert(table,null,values);
             db.close();
         }catch(SQLException e){
             e.printStackTrace();
         }
+    }
+
+    public void addServiceProvider(){
+
     }
 
     public List<User> searchFor(String row, String word, String table) {
@@ -62,7 +73,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                 do {
                     user = new User();
                     user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
-                    user.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                    user.setId(cursor.getInt(cursor.getColumnIndex("uid")));
                     user.setSenha(cursor.getString(cursor.getColumnIndex("password")));
                     user.setFoto(cursor.getBlob(cursor.getColumnIndex("photo")));
                     users.add(user);
@@ -115,16 +126,23 @@ public class DBHelper  extends SQLiteOpenHelper{
     public void eraseDb(){
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL("DROP TABLE IF EXISTS tabela");
-            db.execSQL("DROP TABLE IF EXISTS userTable");
+            db.execSQL("DROP TABLE IF EXISTS serviceProvidersTable");
+            db.execSQL("DROP TABLE IF EXISTS usersTable");
             db.execSQL("CREATE TABLE IF NOT EXISTS " +
-                    "userTable " +
-                    "(username VARCHAR(30), password BINARY(32), id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email VARCHAR(20),name VARCHAR(40),photo BLOB)");
+                    "usersTable " +
+                    "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    " first_name VARCHAR(10), last_name VARCHAR(10), username VARCHAR(30), password BINARY(32),  email VARCHAR(20), date_joined DATE,adm_status BOOLEAN, photo BLOB)");
 
+            db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                    "serviceProvidersTable " +
+                    "(sid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "uid INTEGER NOT NULL, " +
+                    "average DOUBLE, " +
+                    "date_added DATE)");
             User u = new User();
             u.setUsername("victorsou");
             u.setSenha(Security.encrypt("123"));
-            this.addUser(u);
+            this.addUser(u,"usersTable");
         }catch(SQLException e){
             e.printStackTrace();
         }
