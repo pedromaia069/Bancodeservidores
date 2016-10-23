@@ -1,23 +1,39 @@
 package cortez.bancodeservidores;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class AddServiceActivity extends AppCompatActivity {
 
     //fields
     ServiceProvider serviceProvider;
     DBHelper db = new DBHelper(this);
+    User user;
+    List<User> users = new LinkedList<User>();
+
+
+    private SharedPreferences autoLoginPref;
+    private SharedPreferences.Editor autoLoginPrefEditor;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_service);
+
+        //PEGANDO USUARIO LOGADO
+        autoLoginPref = getSharedPreferences("autoLogin",0);
+        autoLoginPrefEditor = autoLoginPref.edit();
+        users = db.searchFor("username",autoLoginPref.getString("username",""),"UsersTable");
+        user = users.get(0);
 
         //IMPLEMENTAR VARIAVEIS DE XML
 
@@ -39,10 +55,10 @@ public class AddServiceActivity extends AppCompatActivity {
 
             case R.id.buttonAddService:
 
-                //IMPLEMENTAR GET NOS VIEWS E SALVAR EM SERVICEPROVIDER
+                //IMPLEMENTAR GET NOS VIEWS E SALVAR EM SERVICEPROVIDER (ISAAC)
 
                 serviceProvider.setFirst_name("babalu");
-                db.addServiceProvider(serviceProvider);
+                db.addServiceProvider(serviceProvider,user);
                 Intent returnServiceCreated = new Intent();
                 setResult(RESULT_OK, returnServiceCreated);
                 finish();

@@ -53,12 +53,11 @@ public class MainMenu extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent addServiceIntent = new Intent(getApplicationContext(),AddServiceActivity.class);
+                addServiceIntent.putExtra("username",user.getUsername());
+                startActivityForResult(addServiceIntent, REQUEST_CODE_ADD_SERVICE);
                 Snackbar.make(view, "Prestador de serviços adicionado com sucesso", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-                Intent addServiceIntent = new Intent(getApplicationContext(),AddServiceActivity.class);
-
-                startActivityForResult(addServiceIntent, REQUEST_CODE_ADD_SERVICE);
             }
         });
     }

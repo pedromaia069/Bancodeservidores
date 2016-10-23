@@ -32,9 +32,22 @@ public class DBHelper  extends SQLiteOpenHelper{
 
         db.execSQL("CREATE TABLE IF NOT EXISTS " +
                 "serviceProvidersTable " +
-                "sid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "(sid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "uid INTEGER NOT NULL, " +
+                "first_name VARCHAR(10), " +
+                "last_name VARCHAR(10), " +
                 "average DOUBLE, " +
-                "date_added DATE");
+                "date_added DATE, " +
+                "FOREIGN KEY (uid) REFERENCES usersTable(uid)" +
+                ")");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                "categoriesTable " +
+                "(category VARCHAR(10), " +
+                "sid INTEGER, " +
+                "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
+                "PRIMARY KEY (sid,category)" +
+                ")");
     }
 
     @Override
@@ -59,13 +72,26 @@ public class DBHelper  extends SQLiteOpenHelper{
         }
     }
 
-    public void addServiceProvider(ServiceProvider sp){
+    public void addServiceProvider(ServiceProvider sp, User u){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         try{
             values.put("first_name",sp.getFirst_name());
-
+            //passando a chave estrangeira(id do user q o adicionou)
+            values.put("uid",u.getId());
             db.insert("serviceProvidersTable",null,values);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addCategory(String cat, ServiceProvider sp){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        try{
+            values.put("category",cat);
+            values.put("sid","1");
+            db.insert("categoriesTable",null,values);
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -136,6 +162,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS serviceProvidersTable");
             db.execSQL("DROP TABLE IF EXISTS usersTable");
+            db.execSQL("DROP TABLE IF EXISTS categoriesTable");
             db.execSQL("CREATE TABLE IF NOT EXISTS " +
                     "usersTable " +
                     "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
@@ -151,10 +178,18 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "date_added DATE, " +
                     "FOREIGN KEY (uid) REFERENCES usersTable(uid)" +
                     ")");
+            db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                    "categoriesTable " +
+                    "(category VARCHAR(10), " +
+                    "sid INTEGER, " +
+                    "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
+                    "PRIMARY KEY (sid,category)" +
+                    ")");
             User u = new User();
             u.setUsername("victorsou");
             u.setSenha(Security.encrypt("123"));
             this.addUser(u,"usersTable");
+            this.addCategory("Pedreiro",new ServiceProvider());
         }catch(SQLException e){
             e.printStackTrace();
         }
