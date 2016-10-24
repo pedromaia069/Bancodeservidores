@@ -102,24 +102,46 @@ public class DBHelper  extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             Cursor cursor = db.rawQuery("SELECT * " + " FROM " + table + " WHERE " + row + " =?", new String[]{word});
-            User user = null;
-            if (cursor.moveToFirst()) {
-                do {
-                    user = new User();
-                    user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
-                    user.setId(cursor.getInt(cursor.getColumnIndex("uid")));
-                    user.setSenha(cursor.getString(cursor.getColumnIndex("password")));
-                    user.setFoto(cursor.getBlob(cursor.getColumnIndex("photo")));
-                    users.add(user);
-                } while (cursor.moveToNext());
-            }
-            Log.d("searchForUsers()", users.toString());
-            db.close();
+                    if (cursor.moveToFirst()) {
+                        do {
+                            User user = new User();
+                            user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
+                            user.setId(cursor.getInt(cursor.getColumnIndex("uid")));
+                            user.setSenha(cursor.getString(cursor.getColumnIndex("password")));
+                            user.setFoto(cursor.getBlob(cursor.getColumnIndex("photo")));
+                            users.add(user);
+                        } while (cursor.moveToNext());
+                    }
+                    Log.d("searchForUsers()", users.toString());
+                    db.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
         return users;
+    }
+
+
+    public LinkedList<ServiceProvider> searchForSp(String row, String word, String table) {
+        LinkedList<ServiceProvider> sps = new LinkedList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * " + " FROM " + table + " WHERE " + row + " =?", new String[]{word});
+            if (cursor.moveToFirst()) {
+                do {
+                    ServiceProvider sp = new ServiceProvider();
+                    sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
+                    //sp.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                    sps.add(sp);
+                } while (cursor.moveToNext());
+            }
+            Log.d("searchForUsers()", sps.toString());
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sps;
     }
 
     public List<User> getAllUsers(){
@@ -166,7 +188,15 @@ public class DBHelper  extends SQLiteOpenHelper{
             db.execSQL("CREATE TABLE IF NOT EXISTS " +
                     "usersTable " +
                     "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    " first_name VARCHAR(10), last_name VARCHAR(10), username VARCHAR(30), password BINARY(32),  email VARCHAR(20), date_joined DATE,adm_status BOOLEAN, photo BLOB)");
+                    " first_name VARCHAR(10), " +
+                    "last_name VARCHAR(10), " +
+                    "username VARCHAR(30), " +
+                    "password BINARY(32), " +
+                    "email VARCHAR(20), " +
+                    "date_joined DATE, " +
+                    "adm_status BOOLEAN, " +
+                    "photo BLOB" +
+                    ")");
 
             db.execSQL("CREATE TABLE IF NOT EXISTS " +
                     "serviceProvidersTable " +
@@ -194,4 +224,5 @@ public class DBHelper  extends SQLiteOpenHelper{
             e.printStackTrace();
         }
     }
+
 }

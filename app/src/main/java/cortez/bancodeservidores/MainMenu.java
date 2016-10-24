@@ -2,6 +2,7 @@ package cortez.bancodeservidores;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -11,8 +12,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +31,9 @@ public class MainMenu extends AppCompatActivity {
     String username;
     User user;
     List<User> users = new LinkedList<User>();
+    List<ServiceProvider> serviceProviders = new ArrayList<ServiceProvider>();
 
     DBHelper db = new DBHelper(this);
-
-
 
 
     private static final int REQUEST_CODE_ADD_SERVICE = 1;
@@ -47,6 +54,8 @@ public class MainMenu extends AppCompatActivity {
 
 
 
+
+
         //ADICIONAR SERVIDOR
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         //fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_add));
@@ -60,7 +69,10 @@ public class MainMenu extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
     }
+
+
 
     //MENU SUPERIOR
     @Override
@@ -72,15 +84,18 @@ public class MainMenu extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) { //MENU CLICADO
         // Handle item selection
         switch (item.getItemId()) {
+
             case R.id.action_search:
-                Toast t = Toast.makeText(this, "Usuario nao encrontado", Toast.LENGTH_LONG);
-                t.show();
+                populateServiceProviderListView();
+                enableListViewClickListener();
+
                 return true;
+
             case R.id.action_settings:
-                t = Toast.makeText(this, "Usuario nao ", Toast.LENGTH_LONG);
+                Toast t = Toast.makeText(this, "Usuario nao ", Toast.LENGTH_LONG);
                 t.show();
                 return true;
             default:
@@ -100,4 +115,70 @@ public class MainMenu extends AppCompatActivity {
         }
     }
 
+
+    //cria um listview com todos os servidores cadastrados
+    private void populateServiceProviderListView() {
+
+        //CREATE LIST OF ITEMS (exemplo de pesquisa onde todos os serviceProviders tem babalu como first_name)
+        serviceProviders = db.searchForSp("first_name","babalu","serviceProvidersTable");
+
+        //BUILD ADAPTER
+        ArrayAdapter<ServiceProvider> adapter = new MyCustomListAdapter();
+
+        //CONFIGURE LIST VIEW
+        ListView listView = (ListView) findViewById(R.id.listViewServiceProvider);
+
+        //PASSING ADAPTER IN LISTVIEW
+        listView.setAdapter(adapter);
+    }
+
+    private void enableListViewClickListener() {
+        ListView listView = (ListView)  findViewById(R.id.listViewServiceProvider);
+
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View viewClicked, int position, long id) {
+                        ServiceProvider clickedSp = serviceProviders.get(position);
+                        Toast.makeText(getBaseContext(),"you clicked position " + position + " which is servicer " + clickedSp.getFirst_name() + ". he's awesome.",Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+
+    //custom adapter for my listview layout
+    private class MyCustomListAdapter extends ArrayAdapter<ServiceProvider> {
+        public MyCustomListAdapter(){
+            //acessing elements of base class, making same thing as it was a simple listview, and receiving the listview layout to work with
+            super(getBaseContext(),R.layout.service_provider_list_view,serviceProviders);
+        }
+
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            //if convertview is null,itemview has to be created now
+            View itemView = convertView;
+            //itemView é a view que usamos para popular as views do listview
+
+            if(itemView == null){
+                //we have to create a view!
+                itemView = getLayoutInflater().inflate(R.layout.service_provider_list_view, parent, false);
+            }
+
+            ServiceProvider currentSp = serviceProviders.get(position);
+
+            //fill the view
+            TextView firstNameTextView = (TextView) itemView.findViewById(R.id.item_textViewFirstName);
+            TextView categoryTextView = (TextView) itemView.findViewById(R.id.item_textViewCategory);
+
+            firstNameTextView.setText(currentSp.getFirst_name());
+            //nao funciona categoria ainda..
+            //categoryTextView.setText(currentSp.getCategory());
+
+            return itemView;
+        }
+    }
 }

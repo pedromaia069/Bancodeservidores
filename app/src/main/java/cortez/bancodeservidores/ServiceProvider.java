@@ -13,6 +13,7 @@ public class ServiceProvider {
     private String last_name;
     private double avarage;
     private String date_added;
+    private String category;
 
     ServiceProvider(){
 
@@ -65,5 +66,13 @@ public class ServiceProvider {
 
     public void setLast_name(String last_name) {
         this.last_name = last_name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

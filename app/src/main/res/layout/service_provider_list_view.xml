@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="5sp"
+    android:paddingStart="5sp">
+
+    <TextView
+        android:text="first name"
+        android:layout_width="150sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_textViewFirstName"
+        android:padding="10sp"/>
+
+    <TextView
+        android:text="category"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_textViewCategory"
+        android:padding="10sp"/>
+
+
+</LinearLayout>
