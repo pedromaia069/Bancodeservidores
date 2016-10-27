@@ -119,8 +119,8 @@ public class MainMenu extends AppCompatActivity {
     //cria um listview com todos os servidores cadastrados
     private void populateServiceProviderListView() {
 
-        //CREATE LIST OF ITEMS (exemplo de pesquisa onde todos os serviceProviders tem babalu como first_name)
-        serviceProviders = db.searchForSp("first_name","babalu","serviceProvidersTable");
+        //CREATE LIST OF ITEMS
+        serviceProviders = db.getAllServiceProviders();
 
         //BUILD ADAPTER
         ArrayAdapter<ServiceProvider> adapter = new MyCustomListAdapter();
@@ -128,7 +128,13 @@ public class MainMenu extends AppCompatActivity {
         //CONFIGURE LIST VIEW
         ListView listView = (ListView) findViewById(R.id.listViewServiceProvider);
 
+        //MAKING HEADER FOR LISTVIEW
+        ViewGroup headerView = (ViewGroup) getLayoutInflater().inflate(R.layout.service_provider_list_view_header,listView,false);
+
         //PASSING ADAPTER IN LISTVIEW
+        if(listView.getHeaderViewsCount() == 0){ //checando se header ja existe
+            listView.addHeaderView(headerView);
+        }
         listView.setAdapter(adapter);
     }
 
@@ -171,12 +177,12 @@ public class MainMenu extends AppCompatActivity {
             ServiceProvider currentSp = serviceProviders.get(position);
 
             //fill the view
-            TextView firstNameTextView = (TextView) itemView.findViewById(R.id.item_textViewFirstName);
-            TextView categoryTextView = (TextView) itemView.findViewById(R.id.item_textViewCategory);
+            TextView nameTextView = (TextView) itemView.findViewById(R.id.item_textViewFirstName);
+            TextView notaTextView = (TextView) itemView.findViewById(R.id.item_textViewNota);
+            TextView addedByTextView = (TextView) itemView.findViewById(R.id.item_TextViewAddedBy);
 
-            firstNameTextView.setText(currentSp.getFirst_name());
-            //nao funciona categoria ainda..
-            //categoryTextView.setText(currentSp.getCategory());
+            nameTextView.setText(currentSp.getFirst_name() + " " + currentSp.getLast_name());
+            addedByTextView.setText(currentSp.getUserFirst_name() + " " + currentSp.getUserLast_name());
 
             return itemView;
         }

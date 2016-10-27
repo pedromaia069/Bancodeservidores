@@ -64,6 +64,9 @@ public class DBHelper  extends SQLiteOpenHelper{
         try{
             values.put("username", user.getUsername());
             values.put("password", user.getSenha());
+            values.put("first_name",user.getFirst_name());
+            values.put("last_name",user.getLast_name());
+            values.put("email",user.getEmail());
             values.put("photo", user.getFoto());
             db.insert(table,null,values);
             db.close();
@@ -75,27 +78,30 @@ public class DBHelper  extends SQLiteOpenHelper{
     public void addServiceProvider(ServiceProvider sp, User u){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        ContentValues values2 = new ContentValues();
+
+        u = this.searchFor("username",u.getUsername(),"usersTable").get(0); //retirar apos pronto (redundante)
+        db = this.getWritableDatabase(); //retirar apos pronto (redundante)
+
         try{
             values.put("first_name",sp.getFirst_name());
+            values.put("last_name",sp.getLast_name());
             //passando a chave estrangeira(id do user q o adicionou)
             values.put("uid",u.getId());
-            db.insert("serviceProvidersTable",null,values);
+            //add and get the primary key of the line added
+            long lastSpId = db.insert("serviceProvidersTable",null,values);
+
+            // for each category of the sp,
+            for(String category : sp.getCategory()) {
+                values2.put("category", category);
+                values2.put("sid",lastSpId);
+                db.insert("categoriesTable",null,values2);
+            }
         }catch(SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void addCategory(String cat, ServiceProvider sp){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        try{
-            values.put("category",cat);
-            values.put("sid","1");
-            db.insert("categoriesTable",null,values);
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
 
     public List<User> searchFor(String row, String word, String table) {
         List<User> users = new LinkedList<User>();
@@ -122,11 +128,11 @@ public class DBHelper  extends SQLiteOpenHelper{
     }
 
 
-    public LinkedList<ServiceProvider> searchForSp(String row, String word, String table) {
+    public LinkedList<ServiceProvider> searchForSpByCategory(String chosenCategory) { //NAO USAR
         LinkedList<ServiceProvider> sps = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * " + " FROM " + table + " WHERE " + row + " =?", new String[]{word});
+            Cursor cursor = db.rawQuery("SELECT * " + " FROM serviceProvidersTable WHERE ",null); //ERRADO
             if (cursor.moveToFirst()) {
                 do {
                     ServiceProvider sp = new ServiceProvider();
@@ -144,10 +150,34 @@ public class DBHelper  extends SQLiteOpenHelper{
         return sps;
     }
 
+    public LinkedList<ServiceProvider> generalSearchForSp() {
+        LinkedList<ServiceProvider> sps = new LinkedList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * " +
+                    "FROM serviceProvidersTable " +
+                    "JOIN categoriesTable " +
+                    "ON serviceProvidersTable.sid = categoriesTable.sid ",null);
+            if (cursor.moveToFirst()) {
+                do {
+                    ServiceProvider sp = new ServiceProvider();
+                    sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
+                    sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
+                    //sp.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                    sps.add(sp);
+                } while (cursor.moveToNext());
+            }
+            Log.d("searchForUsers()", sps.toString());
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sps;
+    }
+
     public List<User> getAllUsers(){
-
         List<User> users = new LinkedList<User>();
-
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
@@ -177,6 +207,40 @@ public class DBHelper  extends SQLiteOpenHelper{
         // return users list
         return users;
 
+    }
+
+    public LinkedList<ServiceProvider> getAllServiceProviders(){
+        LinkedList<ServiceProvider> sps = new LinkedList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
+                    "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, " +
+                    "categoriesTable.category AS category " +
+                    "FROM serviceProvidersTable " +
+                    "INNER JOIN usersTable, categoriesTable " +
+                    "ON serviceProvidersTable.uid = usersTable.uid ", null);
+
+            //go over each row, build serviceprovider and add it to list
+            if (cursor.moveToFirst()) {
+                do {
+                    ServiceProvider sp = new ServiceProvider();
+                    sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
+                    sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
+                    sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
+                    sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
+                    sps.add(sp);
+                } while (cursor.moveToNext());
+            }
+
+            Log.d("getAllUsers()", sps.toString());
+            db.close();
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+
+        return sps;
     }
 
     public void eraseDb(){
@@ -215,14 +279,41 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
                     "PRIMARY KEY (sid,category)" +
                     ")");
+            //USUARIO PADRAO
             User u = new User();
             u.setUsername("victorsou");
             u.setSenha(Security.encrypt("123"));
+            u.setFirst_name("Victor");
+            u.setLast_name("Cortez");
+            u.setEmail("ctovictor@gmail.com");
             this.addUser(u,"usersTable");
-            this.addCategory("Pedreiro",new ServiceProvider());
+
+            ServiceProvider sp = new ServiceProvider();
+            sp.setFirst_name("babalu");
+            sp.setLast_name("Doparaguai");
+            List<String> l = new LinkedList<>();
+            l.add("pedreiro");
+            sp.setCategory(l);
+            this.addServiceProvider(sp,u);
+
+            //this.addCategory()
         }catch(SQLException e){
             e.printStackTrace();
         }
     }
 
 }
+
+//lixo
+
+//    public void addCategory(String cat, ServiceProvider sp){
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        try{
+//            values.put("category",cat);
+//            values.put("sid","1");
+//            db.insert("categoriesTable",null,values);
+//        }catch(SQLException e){
+//            e.printStackTrace();
+//        }
+//    }

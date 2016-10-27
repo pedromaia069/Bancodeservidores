@@ -3,22 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="5sp"
-    android:paddingStart="5sp">
+    android:padding="3sp"
+    android:background="#c0c0c0">
 
     <TextView
         android:text="Nome"
         android:layout_width="150sp"
         android:layout_height="wrap_content"
         android:id="@+id/item_textViewFirstName"
-        android:padding="10sp"/>
+        android:padding="10sp"
+        android:textStyle="bold"
+        android:textSize="17sp"/>
 
     <TextView
         android:text="Nota"
         android:layout_width="60sp"
         android:layout_height="wrap_content"
         android:id="@+id/item_textViewNota"
-        android:padding="10sp"/>
+        android:padding="10sp"
+        android:textStyle="bold"
+        android:textSize="17sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -26,7 +30,9 @@
         android:text="Adicionado por"
         android:layout_weight="1"
         android:id="@+id/item_TextViewAddedBy"
-        android:padding="10sp"/>
+        android:padding="10sp"
+        android:textStyle="bold"
+        android:textSize="17sp"/>
 
 
 </LinearLayout>

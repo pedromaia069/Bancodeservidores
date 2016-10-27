@@ -57,7 +57,12 @@ public class AddServiceActivity extends AppCompatActivity {
 
                 //IMPLEMENTAR GET NOS VIEWS E SALVAR EM SERVICEPROVIDER (ISAAC)
 
-                serviceProvider.setFirst_name("babalu");
+                serviceProvider.setFirst_name("Zé");
+                serviceProvider.setLast_name("josé");
+                List<String> l = new LinkedList<>();
+                l.add("pedreiro");
+                serviceProvider.setCategory(l);
+                serviceProvider.setUid(user.getId());
                 db.addServiceProvider(serviceProvider,user);
                 Intent returnServiceCreated = new Intent();
                 setResult(RESULT_OK, returnServiceCreated);
