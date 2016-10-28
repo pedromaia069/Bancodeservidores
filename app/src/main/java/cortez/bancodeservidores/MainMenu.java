@@ -1,5 +1,6 @@
 package cortez.bancodeservidores;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,11 +58,30 @@ public class MainMenu extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spinner_category);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
+                R.array.planets_array, android.R.layout.simple_spinner_item
+        );
+        // Specify the layout to use when the list of choices appears (simple_spinner is the default one)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position != 0) {
+                    TextView textView = (TextView) selectedItemView;
+                    Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + textView.getText(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+
+        });
+
 
 
 
@@ -151,9 +171,9 @@ public class MainMenu extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+
     private void enableListViewClickListener() {
         ListView listView = (ListView)  findViewById(R.id.listViewServiceProvider);
-
         listView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener(){
                     @Override
@@ -201,3 +221,4 @@ public class MainMenu extends AppCompatActivity {
         }
     }
 }
+

@@ -33,7 +33,7 @@ public class AddServiceActivity extends AppCompatActivity {
         autoLoginPref = getSharedPreferences("autoLogin",0);
         autoLoginPrefEditor = autoLoginPref.edit();
         users = db.searchFor("username",autoLoginPref.getString("username",""),"UsersTable");
-        user = users.get(0);
+        user = users.get(0); //user atual
 
         //IMPLEMENTAR VARIAVEIS DE XML
 
