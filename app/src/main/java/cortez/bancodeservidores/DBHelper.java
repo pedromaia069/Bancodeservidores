@@ -227,6 +227,9 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
+                    LinkedList<String> categories = new LinkedList<>();
+                    categories.add(cursor.getString(cursor.getColumnIndex("category")));
+                    sp.setCategory(categories);
                     sps.add(sp);
                 } while (cursor.moveToNext());
             }
