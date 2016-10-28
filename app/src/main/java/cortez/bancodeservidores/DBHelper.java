@@ -80,9 +80,6 @@ public class DBHelper  extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         ContentValues values2 = new ContentValues();
 
-        u = this.searchFor("username",u.getUsername(),"usersTable").get(0); //retirar apos pronto (redundante)
-        db = this.getWritableDatabase(); //retirar apos pronto (redundante)
-
         try{
             values.put("first_name",sp.getFirst_name());
             values.put("last_name",sp.getLast_name());
@@ -219,7 +216,8 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "categoriesTable.category AS category " +
                     "FROM serviceProvidersTable " +
                     "INNER JOIN usersTable, categoriesTable " +
-                    "ON serviceProvidersTable.uid = usersTable.uid ", null);
+                    "ON serviceProvidersTable.uid = usersTable.uid " +
+                    "AND serviceProvidersTable.sid = categoriesTable.sid", null);
 
             //go over each row, build serviceprovider and add it to list
             if (cursor.moveToFirst()) {
@@ -287,10 +285,14 @@ public class DBHelper  extends SQLiteOpenHelper{
             u.setLast_name("Cortez");
             u.setEmail("ctovictor@gmail.com");
             this.addUser(u,"usersTable");
+            u=this.searchFor("first_name",u.getFirst_name(),"usersTable").get(0);
+
 
             ServiceProvider sp = new ServiceProvider();
             sp.setFirst_name("babalu");
             sp.setLast_name("Doparaguai");
+            sp.setUserFirst_name(u.getFirst_name());
+            sp.setUserLast_name(u.getLast_name());
             List<String> l = new LinkedList<>();
             l.add("pedreiro");
             sp.setCategory(l);

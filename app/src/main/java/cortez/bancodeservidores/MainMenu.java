@@ -133,7 +133,7 @@ public class MainMenu extends AppCompatActivity {
 
         //PASSING ADAPTER IN LISTVIEW
         if(listView.getHeaderViewsCount() == 0){ //checando se header ja existe
-            listView.addHeaderView(headerView);
+            listView.addHeaderView(headerView,null,false);
         }
         listView.setAdapter(adapter);
     }
@@ -145,7 +145,7 @@ public class MainMenu extends AppCompatActivity {
                 new AdapterView.OnItemClickListener(){
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View viewClicked, int position, long id) {
-                        ServiceProvider clickedSp = serviceProviders.get(position);
+                        ServiceProvider clickedSp = serviceProviders.get(position-1); //-1 because of header
                         Toast.makeText(getBaseContext(),"you clicked position " + position + " which is servicer " + clickedSp.getFirst_name() + ". he's awesome.",Toast.LENGTH_SHORT).show();
                     }
                 }
