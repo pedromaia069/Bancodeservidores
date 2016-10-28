@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Banco de servidores</string>
     <string name="title_activity_main_menu">MainMenu</string>
+
+    <string-array name="planets_array">
+        <item>Pesquisar</item>
+        <item>Pedreiro</item>
+        <item>Eletricista</item>
+        <item>Encanador</item>
+        <item>Marceneiro</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
+
 </resources>
