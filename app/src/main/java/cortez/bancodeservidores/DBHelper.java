@@ -159,8 +159,8 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "ON serviceProvidersTable.uid = usersTable.uid " +
                     "AND serviceProvidersTable.sid = categoriesTable.sid " +
                     "AND serviceProvidersTable.sid = notasTable.sid " +
-                    "WHERE serviceProvidersTable.sid = " +
-                    "GROUP BY serviceProvidersTable.sid " + sid, null);
+                    "WHERE serviceProvidersTable.sid = " + sid + " " +
+                    "GROUP BY serviceProvidersTable.sid ", null);
             if (cursor.moveToFirst()) {
                 do {
                     ServiceProvider sp = new ServiceProvider();
@@ -374,6 +374,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             sp.setUserLast_name(u.getLast_name());
             List<String> l = new LinkedList<>();
             l.add("Pedreiro");
+            l.add("Marceneiro");
             sp.setCategory(l);
             sp.setNota(8);
             this.addServiceProvider(sp,u);
