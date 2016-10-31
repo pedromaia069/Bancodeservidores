@@ -152,12 +152,15 @@ public class DBHelper  extends SQLiteOpenHelper{
         try {
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
                     "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
-                    "categoriesTable.category AS category " +
+                    "categoriesTable.category AS category, " +
+                    "ROUND(avg(notasTable.nota),1) AS avarage " +
                     "FROM serviceProvidersTable " +
-                    "INNER JOIN usersTable, categoriesTable " +
+                    "INNER JOIN usersTable, categoriesTable, notasTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
                     "AND serviceProvidersTable.sid = categoriesTable.sid " +
-                    "WHERE serviceProvidersTable.sid = " + sid, null);
+                    "AND serviceProvidersTable.sid = notasTable.sid " +
+                    "WHERE serviceProvidersTable.sid = " +
+                    "GROUP BY serviceProvidersTable.sid " + sid, null);
             if (cursor.moveToFirst()) {
                 do {
                     ServiceProvider sp = new ServiceProvider();
@@ -166,6 +169,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
                     sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
+                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("avarage"))));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);
@@ -194,12 +198,15 @@ public class DBHelper  extends SQLiteOpenHelper{
         try {
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
                     "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
-                    "categoriesTable.category AS category " +
+                    "categoriesTable.category AS category, " +
+                    "ROUND(avg(notasTable.nota),1) AS avarage " +
                     "FROM serviceProvidersTable " +
-                    "INNER JOIN usersTable, categoriesTable " +
+                    "INNER JOIN usersTable, categoriesTable, notasTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
                     "AND serviceProvidersTable.sid = categoriesTable.sid " +
+                    "AND serviceProvidersTable.sid = notasTable.sid " +
                     "AND categoriesTable.category = '" + chosenCategory +"' "+
+                    "GROUP BY serviceProvidersTable.sid " +
                     "ORDER BY " + order, null);
             if (cursor.moveToFirst()) {
                 do {
@@ -209,6 +216,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
                     sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
+                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("avarage"))));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);
