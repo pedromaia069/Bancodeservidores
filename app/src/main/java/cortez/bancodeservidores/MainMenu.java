@@ -34,7 +34,7 @@ public class MainMenu extends AppCompatActivity {
     User user;
     List<User> users = new LinkedList<User>();
     List<ServiceProvider> serviceProviders = new ArrayList<ServiceProvider>();
-    String spinnerCategory;
+    String spinnerCategory = "Todas";
     String spinnerSearchOrder = "Alphabetical";
 
     DBHelper db = new DBHelper(this);
@@ -72,13 +72,7 @@ public class MainMenu extends AppCompatActivity {
                 if(position != 0) {
                     TextView spinnerTextViewSelected = (TextView) selectedItemView;
                     Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + spinnerTextViewSelected.getText(), Toast.LENGTH_SHORT).show();
-                    switch(spinnerTextViewSelected.getText().toString()){
-                        case ("pedreiro"):
-                            spinnerCategory = spinnerTextViewSelected.getText().toString();
-
-
-                        break;
-                    }
+                    spinnerCategory = spinnerTextViewSelected.getText().toString();
                 }
 
             }
@@ -142,7 +136,7 @@ public class MainMenu extends AppCompatActivity {
                 return true;
 
             case R.id.action_settings: //botao qualquer dentro dos 3 pontinhos
-                Toast t = Toast.makeText(this, "Usuario nao ", Toast.LENGTH_LONG);
+                Toast t = Toast.makeText(this, "EXEMPLO", Toast.LENGTH_LONG);
                 t.show();
                 return true;
             default:
@@ -167,7 +161,11 @@ public class MainMenu extends AppCompatActivity {
     private void populateServiceProviderListView() {
 
         //CREATE LIST OF ITEMS
-        serviceProviders = db.searchForSpByCategory(spinnerCategory,spinnerSearchOrder);
+        if(spinnerCategory.equals("Todas")){
+            serviceProviders = db.getAllServiceProviders();
+        }else {
+            serviceProviders = db.searchForSpByCategory(spinnerCategory, spinnerSearchOrder);
+        }
 
         //BUILD ADAPTER
         ArrayAdapter<ServiceProvider> adapter = new MyCustomListAdapter();

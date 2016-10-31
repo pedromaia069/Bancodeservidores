@@ -179,6 +179,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "INNER JOIN usersTable, categoriesTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
                     "AND serviceProvidersTable.sid = categoriesTable.sid " +
+                    "AND categoriesTable.category = '" + chosenCategory +"' "+
                     "ORDER BY " + order, null);
             if (cursor.moveToFirst()) {
                 do {
@@ -329,7 +330,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             sp.setUserFirst_name(u.getFirst_name());
             sp.setUserLast_name(u.getLast_name());
             List<String> l = new LinkedList<>();
-            l.add("pedreiro");
+            l.add("Pedreiro");
             sp.setCategory(l);
             this.addServiceProvider(sp,u);
 

@@ -3,14 +3,18 @@
     <string name="title_activity_main_menu">MainMenu</string>
 
     <string-array name="planets_array">
-        <item>Pesquisar</item>
+        <item>Categoria</item>
         <item>Pedreiro</item>
         <item>Eletricista</item>
         <item>Encanador</item>
         <item>Marceneiro</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>Construtor</item>
+        <item>Gesseiro</item>
+        <item>Estofador</item>
+        <item>Pintor</item>
+        <item>Aplicador de papel de parede</item>
+        <item>Laqueador</item>
+        <item>Todas</item>
     </string-array>
 
 </resources>

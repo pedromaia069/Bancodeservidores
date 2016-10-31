@@ -60,7 +60,7 @@ public class AddServiceActivity extends AppCompatActivity {
                 serviceProvider.setFirst_name("Zé");
                 serviceProvider.setLast_name("josé");
                 List<String> l = new LinkedList<>();
-                l.add("pedreiro");
+                l.add("Pedreiro");
                 serviceProvider.setCategory(l);
                 serviceProvider.setUid(user.getId());
                 serviceProvider.setUserFirst_name(user.getFirst_name());
