@@ -19,7 +19,8 @@
             android:name=".MainMenu"
             android:label="@string/title_activity_main_menu"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddServiceActivity"></activity>
+        <activity android:name=".AddServiceActivity" />
+        <activity android:name=".ServiceProviderProfilePage"></activity>
     </application>
 
 </manifest>

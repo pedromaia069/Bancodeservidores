@@ -112,6 +112,8 @@ public class DBHelper  extends SQLiteOpenHelper{
                             user.setId(cursor.getInt(cursor.getColumnIndex("uid")));
                             user.setSenha(cursor.getString(cursor.getColumnIndex("password")));
                             user.setFoto(cursor.getBlob(cursor.getColumnIndex("photo")));
+                            user.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
+                            user.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
                             users.add(user);
                         } while (cursor.moveToNext());
                     }
@@ -124,44 +126,72 @@ public class DBHelper  extends SQLiteOpenHelper{
         return users;
     }
 
-
-    public LinkedList<ServiceProvider> searchForSpByCategory(String chosenCategory) { //NAO USAR
+    public List<ServiceProvider> searchForSp(int sid){
         LinkedList<ServiceProvider> sps = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * " + " FROM serviceProvidersTable WHERE ",null); //ERRADO
-            if (cursor.moveToFirst()) {
-                do {
-                    ServiceProvider sp = new ServiceProvider();
-                    sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
-                    //sp.setCategory(cursor.getString(cursor.getColumnIndex("category")));
-                    sps.add(sp);
-                } while (cursor.moveToNext());
-            }
-            Log.d("searchForUsers()", sps.toString());
-            db.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sps;
-    }
-
-    public LinkedList<ServiceProvider> generalSearchForSp() {
-        LinkedList<ServiceProvider> sps = new LinkedList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            Cursor cursor = db.rawQuery("SELECT * " +
+            Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
+                    "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
+                    "categoriesTable.category AS category " +
                     "FROM serviceProvidersTable " +
-                    "JOIN categoriesTable " +
-                    "ON serviceProvidersTable.sid = categoriesTable.sid ",null);
+                    "INNER JOIN usersTable, categoriesTable " +
+                    "ON serviceProvidersTable.uid = usersTable.uid " +
+                    "AND serviceProvidersTable.sid = categoriesTable.sid " +
+                    "WHERE serviceProvidersTable.sid = " + sid, null);
             if (cursor.moveToFirst()) {
                 do {
                     ServiceProvider sp = new ServiceProvider();
                     sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
                     sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
-                    //sp.setCategory(cursor.getString(cursor.getColumnIndex("category")));
-                    sps.add(sp);
+                    sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
+                    sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
+                    sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
+                    LinkedList<String> categories = new LinkedList<>();
+                    categories.add(cursor.getString(cursor.getColumnIndex("category")));
+                    sp.setCategory(categories);
+                    sps.addFirst(sp);
+                } while (cursor.moveToNext());
+            }
+            Log.d("searchForUsers()", sps.toString());
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return sps;
+    }
+
+
+    public LinkedList<ServiceProvider> searchForSpByCategory(String chosenCategory,String order) {
+        if(order.equals("Alphabetical")){
+            order = "first_name";
+        }else{
+            order = "nota";
+        }
+        LinkedList<ServiceProvider> sps = new LinkedList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
+                    "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
+                    "categoriesTable.category AS category " +
+                    "FROM serviceProvidersTable " +
+                    "INNER JOIN usersTable, categoriesTable " +
+                    "ON serviceProvidersTable.uid = usersTable.uid " +
+                    "AND serviceProvidersTable.sid = categoriesTable.sid " +
+                    "ORDER BY " + order, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    ServiceProvider sp = new ServiceProvider();
+                    sp.setFirst_name(cursor.getString(cursor.getColumnIndex("first_name")));
+                    sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
+                    sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
+                    sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
+                    sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
+                    LinkedList<String> categories = new LinkedList<>();
+                    categories.add(cursor.getString(cursor.getColumnIndex("category")));
+                    sp.setCategory(categories);
+                    sps.addFirst(sp);
                 } while (cursor.moveToNext());
             }
             Log.d("searchForUsers()", sps.toString());
@@ -172,6 +202,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         }
         return sps;
     }
+
 
     public List<User> getAllUsers(){
         List<User> users = new LinkedList<User>();
@@ -212,7 +243,7 @@ public class DBHelper  extends SQLiteOpenHelper{
 
         try {
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
-                    "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, " +
+                    "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
                     "categoriesTable.category AS category " +
                     "FROM serviceProvidersTable " +
                     "INNER JOIN usersTable, categoriesTable " +
@@ -227,6 +258,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setLast_name(cursor.getString(cursor.getColumnIndex("last_name")));
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
+                    sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);

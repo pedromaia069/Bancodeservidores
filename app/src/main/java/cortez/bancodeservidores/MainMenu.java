@@ -34,6 +34,8 @@ public class MainMenu extends AppCompatActivity {
     User user;
     List<User> users = new LinkedList<User>();
     List<ServiceProvider> serviceProviders = new ArrayList<ServiceProvider>();
+    String spinnerCategory;
+    String spinnerSearchOrder = "Alphabetical";
 
     DBHelper db = new DBHelper(this);
 
@@ -55,21 +57,28 @@ public class MainMenu extends AppCompatActivity {
         user = users.get(0);
 
         //Carregando o spinner de opcoes
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_category);
+        final Spinner spinner = (Spinner) findViewById(R.id.spinner_category);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, android.R.layout.simple_spinner_item
-        );
+                R.array.planets_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears (simple_spinner is the default one)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+        //listener do spinner de categorias
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != 0) {
-                    TextView textView = (TextView) selectedItemView;
-                    Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + textView.getText(), Toast.LENGTH_SHORT).show();
+                    TextView spinnerTextViewSelected = (TextView) selectedItemView;
+                    Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + spinnerTextViewSelected.getText(), Toast.LENGTH_SHORT).show();
+                    switch(spinnerTextViewSelected.getText().toString()){
+                        case ("pedreiro"):
+                            spinnerCategory = spinnerTextViewSelected.getText().toString();
+
+
+                        break;
+                    }
                 }
 
             }
@@ -85,20 +94,27 @@ public class MainMenu extends AppCompatActivity {
 
 
 
-
-
-
-
         //ADICIONAR SERVIDOR
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_add));
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
+        //fabAdd.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_add));
+        fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent addServiceIntent = new Intent(getApplicationContext(),AddServiceActivity.class);
                 addServiceIntent.putExtra("username",user.getUsername());
                 startActivityForResult(addServiceIntent, REQUEST_CODE_ADD_SERVICE);
                 Snackbar.make(view, "Prestador de serviços adicionado com sucesso", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        //PESQUISAR
+        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.fabSearch);
+        fabSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                populateServiceProviderListView();
+                enableListViewClickListener();
+                Snackbar.make(view, "Pesquisado com sucesso", Snackbar.LENGTH_SHORT) //DEPURAÇÃO APENAS. RETIRAR DEPOIS
                         .setAction("Action", null).show();
             }
         });
@@ -112,7 +128,7 @@ public class MainMenu extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main_menu, menu);
-        setTitle(user.getUsername());
+        setTitle(user.getFirst_name() + " " + user.getLast_name());
         return true;
     }
 
@@ -121,13 +137,11 @@ public class MainMenu extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
 
-            case R.id.action_search:
-                populateServiceProviderListView();
-                enableListViewClickListener();
+            case R.id.action_search: //botao qualquer
 
                 return true;
 
-            case R.id.action_settings:
+            case R.id.action_settings: //botao qualquer dentro dos 3 pontinhos
                 Toast t = Toast.makeText(this, "Usuario nao ", Toast.LENGTH_LONG);
                 t.show();
                 return true;
@@ -153,7 +167,7 @@ public class MainMenu extends AppCompatActivity {
     private void populateServiceProviderListView() {
 
         //CREATE LIST OF ITEMS
-        serviceProviders = db.getAllServiceProviders();
+        serviceProviders = db.searchForSpByCategory(spinnerCategory,spinnerSearchOrder);
 
         //BUILD ADAPTER
         ArrayAdapter<ServiceProvider> adapter = new MyCustomListAdapter();
@@ -179,6 +193,9 @@ public class MainMenu extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View viewClicked, int position, long id) {
                         ServiceProvider clickedSp = serviceProviders.get(position-1); //-1 because of header
+                        Intent intentGotoSpProfilePage = new Intent(getBaseContext(),ServiceProviderProfilePage.class);
+                        intentGotoSpProfilePage.putExtra("sid","" + clickedSp.getSid());
+                        startActivity(intentGotoSpProfilePage);
                         Toast.makeText(getBaseContext(),"you clicked position " + position + " which is servicer " + clickedSp.getFirst_name() + ". he's awesome.",Toast.LENGTH_SHORT).show();
                     }
                 }
