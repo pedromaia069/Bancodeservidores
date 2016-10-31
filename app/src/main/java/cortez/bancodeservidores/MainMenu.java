@@ -230,6 +230,7 @@ public class MainMenu extends AppCompatActivity {
             TextView addedByTextView = (TextView) itemView.findViewById(R.id.item_TextViewAddedBy);
 
             nameTextView.setText(currentSp.getFirst_name() + " " + currentSp.getLast_name());
+            notaTextView.setText("" + currentSp.getAvarage());
             addedByTextView.setText(currentSp.getUserFirst_name() + " " + currentSp.getUserLast_name());
 
             return itemView;

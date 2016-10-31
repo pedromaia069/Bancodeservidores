@@ -43,10 +43,22 @@ public class DBHelper  extends SQLiteOpenHelper{
 
         db.execSQL("CREATE TABLE IF NOT EXISTS " +
                 "categoriesTable " +
-                "(category VARCHAR(10), " +
+                "(" +
+                "category VARCHAR(10), " +
                 "sid INTEGER, " +
                 "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
                 "PRIMARY KEY (sid,category)" +
+                ")");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                "notasTable" +
+                "(" +
+                "nota DOUBLE, " +
+                "uid INTEGER, " +
+                "sid INTEGER, " +
+                "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
+                "FOREIGN KEY (uid) REFERENCES usersTable(uid), " +
+                "PRIMARY KEY (sid,uid)" +
                 ")");
     }
 
@@ -79,6 +91,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         ContentValues values2 = new ContentValues();
+        ContentValues values3 = new ContentValues();
 
         try{
             values.put("first_name",sp.getFirst_name());
@@ -94,6 +107,13 @@ public class DBHelper  extends SQLiteOpenHelper{
                 values2.put("sid",lastSpId);
                 db.insert("categoriesTable",null,values2);
             }
+
+            //nota
+            values3.put("nota",sp.getNota());
+            values3.put("uid",u.getId());
+            values3.put("sid",lastSpId);
+            db.insert("notasTable",null,values3);
+
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -245,11 +265,14 @@ public class DBHelper  extends SQLiteOpenHelper{
         try {
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
                     "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
-                    "categoriesTable.category AS category " +
+                    "categoriesTable.category AS category, " +
+                    "ROUND(avg(notasTable.nota),1) AS avarage " +
                     "FROM serviceProvidersTable " +
-                    "INNER JOIN usersTable, categoriesTable " +
+                    "INNER JOIN usersTable, categoriesTable, notasTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
-                    "AND serviceProvidersTable.sid = categoriesTable.sid", null);
+                    "AND serviceProvidersTable.sid = categoriesTable.sid " +
+                    "AND serviceProvidersTable.sid = notasTable.sid " +
+                    "GROUP BY serviceProvidersTable.sid ", null);
 
             //go over each row, build serviceprovider and add it to list
             if (cursor.moveToFirst()) {
@@ -260,6 +283,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
                     sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
+                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("avarage"))));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);
@@ -283,6 +307,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             db.execSQL("DROP TABLE IF EXISTS serviceProvidersTable");
             db.execSQL("DROP TABLE IF EXISTS usersTable");
             db.execSQL("DROP TABLE IF EXISTS categoriesTable");
+            db.execSQL("DROP TABLE IF EXISTS notasTable");
             db.execSQL("CREATE TABLE IF NOT EXISTS " +
                     "usersTable " +
                     "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
@@ -313,6 +338,16 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
                     "PRIMARY KEY (sid,category)" +
                     ")");
+            db.execSQL("CREATE TABLE IF NOT EXISTS " +
+                    "notasTable" +
+                    "(" +
+                    "nota DOUBLE, " +
+                    "uid INTEGER, " +
+                    "sid INTEGER, " +
+                    "FOREIGN KEY (sid) REFERENCES serviceProvidersTable(sid), " +
+                    "FOREIGN KEY (uid) REFERENCES usersTable(uid), " +
+                    "PRIMARY KEY (sid,uid)" +
+                    ")");
             //USUARIO PADRAO
             User u = new User();
             u.setUsername("victorsou");
@@ -332,6 +367,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             List<String> l = new LinkedList<>();
             l.add("Pedreiro");
             sp.setCategory(l);
+            sp.setNota(8);
             this.addServiceProvider(sp,u);
 
             //this.addCategory()
