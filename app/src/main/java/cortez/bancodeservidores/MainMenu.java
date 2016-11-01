@@ -34,8 +34,8 @@ public class MainMenu extends AppCompatActivity {
     User user;
     List<User> users = new LinkedList<User>();
     List<ServiceProvider> serviceProviders = new ArrayList<ServiceProvider>();
-    String spinnerCategory = "Todas";
-    String spinnerSearchOrder = "Alphabetical";
+    String spinnerCategoryString = "Todas";
+    String spinnerSearchOrderString = "Nome";
 
     DBHelper db = new DBHelper(this);
 
@@ -56,34 +56,56 @@ public class MainMenu extends AppCompatActivity {
         //usuario que estamos lidando foi selecionado
         user = users.get(0);
 
-        //Carregando o spinner de opcoes
-        final Spinner spinner = (Spinner) findViewById(R.id.spinner_category);
+        //SPINNER DE CATEGORIA
+        final Spinner spinnerCategory = (Spinner) findViewById(R.id.spinner_category);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterCategory = ArrayAdapter.createFromResource(this,
+                R.array.categories_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears (simple_spinner is the default one)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        spinnerCategory.setAdapter(adapterCategory);
         //listener do spinner de categorias
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != 0) {
                     TextView spinnerTextViewSelected = (TextView) selectedItemView;
                     Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + spinnerTextViewSelected.getText(), Toast.LENGTH_SHORT).show();
-                    spinnerCategory = spinnerTextViewSelected.getText().toString();
+                    spinnerCategoryString = spinnerTextViewSelected.getText().toString();
                 }
-
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
             }
-
-
         });
+
+        //SPINNER DE ORDEM DE PESQUISA
+        final Spinner spinnerSearchOrder = (Spinner) findViewById(R.id.spinner_search_preference);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterSearchOrder = ArrayAdapter.createFromResource(this,
+                R.array.search_preference_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears (simple_spinner is the default one)
+        adapterSearchOrder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerSearchOrder.setAdapter(adapterSearchOrder);
+        //listener do spinner de categorias
+        spinnerSearchOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position != 0) {
+                    TextView spinnerTextViewSelected = (TextView) selectedItemView;
+                    Toast.makeText(getBaseContext(), "clicked # " + position + "witch is " + spinnerTextViewSelected.getText(), Toast.LENGTH_SHORT).show();
+                    spinnerSearchOrderString = spinnerTextViewSelected.getText().toString();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
 
 
 
@@ -161,10 +183,10 @@ public class MainMenu extends AppCompatActivity {
     private void populateServiceProviderListView() {
 
         //CREATE LIST OF ITEMS
-        if(spinnerCategory.equals("Todas")){
-            serviceProviders = db.getAllServiceProviders();
+        if(spinnerCategoryString.equals("Todas")){
+            serviceProviders = db.getAllServiceProviders(spinnerSearchOrderString);
         }else {
-            serviceProviders = db.searchForSpByCategory(spinnerCategory, spinnerSearchOrder);
+            serviceProviders = db.searchForSpByCategory(spinnerCategoryString, spinnerSearchOrderString);
         }
 
         //BUILD ADAPTER

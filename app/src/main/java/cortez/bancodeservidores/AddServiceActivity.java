@@ -65,7 +65,7 @@ public class AddServiceActivity extends AppCompatActivity {
                 serviceProvider.setUid(user.getId());
                 serviceProvider.setUserFirst_name(user.getFirst_name());
                 serviceProvider.setUserLast_name(user.getLast_name());
-                serviceProvider.setNota(7);
+                serviceProvider.setNota(9);
                 db.addServiceProvider(serviceProvider,user);
                 Intent returnServiceCreated = new Intent();
                 setResult(RESULT_OK, returnServiceCreated);

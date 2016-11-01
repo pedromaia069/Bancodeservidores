@@ -188,10 +188,10 @@ public class DBHelper  extends SQLiteOpenHelper{
 
 
     public LinkedList<ServiceProvider> searchForSpByCategory(String chosenCategory,String order) {
-        if(order.equals("Alphabetical")){
-            order = "first_name";
+        if(order.equals("Nome")){
+            order = "serviceProvidersTable.first_name";
         }else{
-            order = "nota";
+            order = "average DESC";
         }
         LinkedList<ServiceProvider> sps = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -199,7 +199,7 @@ public class DBHelper  extends SQLiteOpenHelper{
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
                     "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
                     "categoriesTable.category AS category, " +
-                    "ROUND(avg(notasTable.nota),1) AS avarage " +
+                    "ROUND(avg(notasTable.nota),1) AS average " +
                     "FROM serviceProvidersTable " +
                     "INNER JOIN usersTable, categoriesTable, notasTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
@@ -216,11 +216,11 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
                     sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
-                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("avarage"))));
+                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("average"))));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);
-                    sps.addFirst(sp);
+                    sps.add(sp);
                 } while (cursor.moveToNext());
             }
             Log.d("searchForUsers()", sps.toString());
@@ -266,7 +266,12 @@ public class DBHelper  extends SQLiteOpenHelper{
 
     }
 
-    public LinkedList<ServiceProvider> getAllServiceProviders(){
+    public LinkedList<ServiceProvider> getAllServiceProviders(String order){
+        if(order.equals("Nome")){
+            order = "first_name";
+        }else{
+            order = "average DESC";
+        }
         LinkedList<ServiceProvider> sps = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -274,13 +279,14 @@ public class DBHelper  extends SQLiteOpenHelper{
             Cursor cursor = db.rawQuery("SELECT usersTable.first_name AS userFirstName, usersTable.last_name AS userLastName, " +
                     "serviceProvidersTable.first_name AS first_name, serviceProvidersTable.last_name AS last_name, serviceProvidersTable.sid AS sid, " +
                     "categoriesTable.category AS category, " +
-                    "ROUND(avg(notasTable.nota),1) AS avarage " +
+                    "ROUND(avg(notasTable.nota),1) AS average " +
                     "FROM serviceProvidersTable " +
                     "INNER JOIN usersTable, categoriesTable, notasTable " +
                     "ON serviceProvidersTable.uid = usersTable.uid " +
                     "AND serviceProvidersTable.sid = categoriesTable.sid " +
                     "AND serviceProvidersTable.sid = notasTable.sid " +
-                    "GROUP BY serviceProvidersTable.sid ", null);
+                    "GROUP BY serviceProvidersTable.sid " +
+                    "ORDER BY " + order, null);
 
             //go over each row, build serviceprovider and add it to list
             if (cursor.moveToFirst()) {
@@ -291,7 +297,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                     sp.setUserFirst_name(cursor.getString(cursor.getColumnIndex("userFirstName")));
                     sp.setUserLast_name(cursor.getString(cursor.getColumnIndex("userLastName")));
                     sp.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
-                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("avarage"))));
+                    sp.setAvarage(Double.parseDouble(cursor.getString(cursor.getColumnIndex("average"))));
                     LinkedList<String> categories = new LinkedList<>();
                     categories.add(cursor.getString(cursor.getColumnIndex("category")));
                     sp.setCategory(categories);
@@ -368,7 +374,7 @@ public class DBHelper  extends SQLiteOpenHelper{
 
 
             ServiceProvider sp = new ServiceProvider();
-            sp.setFirst_name("babalu");
+            sp.setFirst_name("Babalu");
             sp.setLast_name("Doparaguai");
             sp.setUserFirst_name(u.getFirst_name());
             sp.setUserLast_name(u.getLast_name());
@@ -377,6 +383,14 @@ public class DBHelper  extends SQLiteOpenHelper{
             l.add("Marceneiro");
             sp.setCategory(l);
             sp.setNota(8);
+            this.addServiceProvider(sp,u);
+            sp.setFirst_name("Arnaldo");
+            sp.setLast_name("Ruim");
+            l.clear();
+            l.add("Encanador");
+            l.add("Pedreiro");
+            sp.setCategory(l);
+            sp.setNota(2);
             this.addServiceProvider(sp,u);
 
             //this.addCategory()

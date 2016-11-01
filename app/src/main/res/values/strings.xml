@@ -2,7 +2,7 @@
     <string name="app_name">Banco de servidores</string>
     <string name="title_activity_main_menu">MainMenu</string>
 
-    <string-array name="planets_array">
+    <string-array name="categories_array">
         <item>Categoria</item>
         <item>Pedreiro</item>
         <item>Eletricista</item>
@@ -15,6 +15,12 @@
         <item>Aplicador de papel de parede</item>
         <item>Laqueador</item>
         <item>Todas</item>
+    </string-array>
+
+    <string-array name="search_preference_array">
+        <item>Ordenar por</item>
+        <item>Nome</item>
+        <item>Nota</item>
     </string-array>
 
 </resources>
