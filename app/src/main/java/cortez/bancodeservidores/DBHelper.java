@@ -362,41 +362,57 @@ public class DBHelper  extends SQLiteOpenHelper{
                     "FOREIGN KEY (uid) REFERENCES usersTable(uid), " +
                     "PRIMARY KEY (sid,uid)" +
                     ")");
-            //USUARIO PADRAO
-            User u = new User();
-            u.setUsername("victorsou");
-            u.setSenha(Security.encrypt("123"));
-            u.setFirst_name("Victor");
-            u.setLast_name("Cortez");
-            u.setEmail("ctovictor@gmail.com");
-            this.addUser(u,"usersTable");
-            u=this.searchFor("first_name",u.getFirst_name(),"usersTable").get(0);
 
 
-            ServiceProvider sp = new ServiceProvider();
-            sp.setFirst_name("Babalu");
-            sp.setLast_name("Doparaguai");
-            sp.setUserFirst_name(u.getFirst_name());
-            sp.setUserLast_name(u.getLast_name());
-            List<String> l = new LinkedList<>();
-            l.add("Pedreiro");
-            l.add("Marceneiro");
-            sp.setCategory(l);
-            sp.setNota(8);
-            this.addServiceProvider(sp,u);
-            sp.setFirst_name("Arnaldo");
-            sp.setLast_name("Ruim");
-            l.clear();
-            l.add("Encanador");
-            l.add("Pedreiro");
-            sp.setCategory(l);
-            sp.setNota(2);
-            this.addServiceProvider(sp,u);
+
+            povoarComListaExemploEUserPadrao();
+
 
             //this.addCategory()
         }catch(SQLException e){
             e.printStackTrace();
         }
+    }
+
+    private void povoarComListaExemploEUserPadrao() {
+        //USUARIO PADRAO
+        User u = new User();
+        u.setUsername("victorsou");
+        u.setSenha(Security.encrypt("123"));
+        u.setFirst_name("Victor");
+        u.setLast_name("Cortez");
+        u.setEmail("ctovictor@gmail.com");
+        this.addUser(u,"usersTable");
+        u=this.searchFor("first_name",u.getFirst_name(),"usersTable").get(0);
+
+        ServiceProvider sp = new ServiceProvider();
+        sp.setFirst_name("Babalu");
+        sp.setLast_name("Doparaguai");
+        sp.setUserFirst_name(u.getFirst_name());
+        sp.setUserLast_name(u.getLast_name());
+        List<String> l = new LinkedList<>();
+        l.add("Pedreiro");
+        l.add("Marceneiro");
+        sp.setCategory(l);
+        sp.setNota(8);
+        this.addServiceProvider(sp,u);
+
+        sp.setFirst_name("Arnaldo");
+        sp.setLast_name("Ruim");
+        l.clear();
+        l.add("Encanador");
+        l.add("Pedreiro");
+        sp.setCategory(l);
+        sp.setNota(2);
+        this.addServiceProvider(sp,u);
+
+        sp.setFirst_name("Thomas");
+        sp.setLast_name("Volt");
+        l.clear();
+        l.add("Eletricista");
+        sp.setCategory(l);
+        sp.setNota(10);
+        this.addServiceProvider(sp,u);
     }
 
 }
